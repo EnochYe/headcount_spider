@@ -1,7 +1,8 @@
 from attr import attributes
 import zipcodes
 
-def get_details(browser_handle, job_type, row_index, ws):
+
+def get_details(browser_handle, job_type, row_index, ws, w):
     job = browser_handle.find_element('//div[@class=\'jobs-unified-top-card__content--two-pane\']/a')
     job_title = job.text
     job_link = job.get_attribute('href')
@@ -17,17 +18,23 @@ def get_details(browser_handle, job_type, row_index, ws):
     location = browser_handle.find_elements('//span[@class=\'jobs-unified-top-card__bullet\']')[0].text
 
     try:
-        company_details = browser_handle.find_element('//li[@class=\'jobs-unified-top-card__job-insight\'][2]').text.split('·')
+        company_details = browser_handle.find_element(
+            '//li[@class=\'jobs-unified-top-card__job-insight\'][2]').text.split('·')
         company_size = company_details[0]
         company_industry = company_details[1]
     except Exception:
         company_size = 'null'
         company_industry = 'null'
 
-    try:
-        workplace_type = browser_handle.find_element('//span[@class="jobs-unified-top-card__workplace-type"]').text
-    except Exception:
+    if (len(browser_handle.find_elements(
+            '//span[@class="jobs-unified-top-card__subtitle-primary-grouping mr2 t-black"]/span')) < 3):
         workplace_type = 'null'
+    else:
+        workplace_type = browser_handle.find_element('//span[@class="jobs-unified-top-card__workplace-type"]').text
+    # try:
+    #     workplace_type = browser_handle.find_element('//span[@class="jobs-unified-top-card__workplace-type"]').text
+    # except Exception:
+    #     workplace_type = 'null'
 
     # 使用外来的包获取地址对应的邮编
     try:
@@ -37,32 +44,9 @@ def get_details(browser_handle, job_type, row_index, ws):
     except IndexError as rss:
         zipcode = 'null'
 
-    
-    """
-    for line_index in range(1, 11):
-        if line_index == 1:
-            ws.cell(row_index, line_index, job_title)
-        elif line_index == 2:
-            ws.cell(row_index, line_index, company_name)
-        elif line_index == 3:
-            ws.cell(row_index, line_index, location)
-        elif line_index == 4:
-            ws.cell(row_index, line_index, job_link)
-        elif line_index == 5:
-            ws.cell(row_index, line_index, company_link)
-        elif line_index == 6:
-            ws.cell(row_index, line_index, job_type)
-        elif line_index == 7:
-            ws.cell(row_index, line_index, workplace_type)
-        elif line_index == 8:
-            ws.cell(row_index, line_index, zipcode)
-        elif line_index == 9:
-            ws.cell(row_index, line_index, company_industry)
-        elif line_index == 10:
-            ws.cell(row_index, line_index, company_size)
-    """
-    # 以上写的太笨拙了，给你改成如下
-
-    attributes = (job_title, company_name, location, job_link, company_link, job_type, workplace_type, zipcode, company_industry, company_size)
+    attributes = (
+        job_title, company_name, location, job_link, company_link, job_type, workplace_type, zipcode, company_industry,
+        company_size)
     for index, attr in enumerate(attributes):
-        ws.cell(row_index, index+1, attr)
+        ws.cell(row_index, index + 1, attr)
+    w.save("test.xlsx")
