@@ -4,6 +4,7 @@ import time
 
 # 主函数
 # test Git
+# test Git2
 if __name__ == '__main__':
     # 需要提前配置好selenium对应的浏览器驱动
     driver_path = r'E:\driver\chromedriver.exe'
